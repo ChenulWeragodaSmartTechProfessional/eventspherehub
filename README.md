@@ -427,7 +427,7 @@ No installation is required.
 Clone the GitHub repository:
 
 ```
-git clone https://github.com/YOUR-USERNAME/EventSphere.git
+git clone https://github.com/ChenulWeragodaSmartTechProfessional/EventSphere.git
 ```
 
 Or download the repository as a ZIP file from GitHub.
