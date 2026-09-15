@@ -170,14 +170,12 @@
 </head>
 <body>
 
-    <!-- Authentication View -->
     <div id="authContainer" class="auth-card">
         <h2>Admin Portal</h2>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Sign in with your administrator account to access metrics and management tools.</p>
         <button id="googleLoginBtn" class="btn">Sign in with Google</button>
     </div>
 
-    <!-- Admin Panel View -->
     <div id="adminContainer" class="layout hidden">
         <aside class="sidebar">
             <div class="brand">
@@ -195,7 +193,6 @@
         </aside>
 
         <main class="main-content">
-            <!-- Dashboard Tab -->
             <div id="tabDashboard">
                 <h2>Real-time Metrics</h2>
                 <div class="metrics-grid">
@@ -210,7 +207,6 @@
                 </div>
             </div>
 
-            <!-- Events List & Edit Tab -->
             <div id="tabEvents" class="hidden">
                 <h2>Event & Calendar Management</h2>
                 <div class="section">
@@ -224,12 +220,10 @@
                             </tr>
                         </thead>
                         <tbody id="eventsTableBody">
-                            <!-- Dynamically populated rows -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Edit Event Section -->
                 <div id="editSection" class="section hidden">
                     <h3>Edit Event</h3>
                     <form id="editEventForm">
@@ -254,7 +248,6 @@
                 </div>
             </div>
 
-            <!-- Create Event Tab -->
             <div id="tabCreate" class="hidden">
                 <h2>Publish New Event</h2>
                 <div class="section">
@@ -287,7 +280,6 @@
         </main>
     </div>
 
-    <!-- Application Scripting -->
     <script type="module">
         import { auth, db } from "./js/firebase-config.js";
         import { 
@@ -304,6 +296,11 @@
             deleteDoc, 
             onSnapshot 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        
+        const ADMIN_EMAILS = [
+            "ideas.by.chen@gmail.com"
+        ];
 
         // UI Element Selectors
         const googleLoginBtn = document.getElementById("googleLoginBtn");
@@ -324,12 +321,24 @@
 
         logoutBtn.addEventListener("click", () => signOut(auth));
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                authContainer.classList.add("hidden");
-                adminContainer.classList.remove("hidden");
-                userDisplay.textContent = user.email;
-                initializeDashboard();
+                // Verify if the logged-in email is on the allowed list
+                const isAllowed = ADMIN_EMAILS.some(
+                    email => email.toLowerCase() === user.email.toLowerCase()
+                );
+
+                if (isAllowed) {
+                    authContainer.classList.add("hidden");
+                    adminContainer.classList.remove("hidden");
+                    userDisplay.textContent = user.email;
+                    initializeDashboard();
+                } else {
+                    alert("Unauthorized access. You are not an administrator.");
+                    await signOut(auth);
+                    authContainer.classList.remove("hidden");
+                    adminContainer.classList.add("hidden");
+                }
             } else {
                 authContainer.classList.remove("hidden");
                 adminContainer.classList.add("hidden");
