@@ -23,6 +23,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const googleButton = document.getElementById("googleButton");
   const forgotPassword = document.getElementById("forgotPassword");
   const loginButton = document.getElementById("loginButton") || document.getElementById("submitBtn");
+
+  // Helper function to handle role-based navigation
+  async function handleUserRedirect(user) {
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.role === "admin") {
+          window.location.href = "admin.html";
+          return;
+        }
+      }
+      // Default page for student, teacher, or parent
+      window.location.href = "../index.html";
+    } catch (err) {
+      console.error("Error checking user role:", err);
+      window.location.href = "../index.html";
+    }
+  }
+
+  // Role Selection Toggle
   roleCards.forEach(card => {
     card.addEventListener("click", () => {
       roleCards.forEach(item => item.classList.remove("active"));
@@ -33,6 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+
+  // Password Visibility Toggle
   if (passwordToggle && password) {
     passwordToggle.addEventListener("click", () => {
       if (password.type === "password") {
@@ -44,6 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Email / Password Form Submission
   if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -65,9 +92,10 @@ document.addEventListener("DOMContentLoaded", () => {
           loginButton.textContent = "Signing in...";
         }
 
-        await setPersistence(auth, rememberMe && rememberMe.checked
-          ? browserLocalPersistence
-          : browserSessionPersistence);
+        await setPersistence(
+          auth, 
+          rememberMe && rememberMe.checked ? browserLocalPersistence : browserSessionPersistence
+        );
 
         const userCredential = await signInWithEmailAndPassword(auth, email, passwordValue);
         const user = userCredential.user;
@@ -82,8 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        alert("Signed in successfully!");
-        window.location.href = "../index.html";
+        await handleUserRedirect(user);
 
       } catch (error) {
         alert("Login failed: " + error.message);
@@ -95,6 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Google Sign-In Handler
   if (googleButton) {
     googleButton.addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
@@ -106,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
+
         if (!userDoc.exists()) {
           await setDoc(userDocRef, {
             uid: user.uid,
@@ -116,13 +146,15 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }
 
-        alert("Signed in successfully with Google!");
-        window.location.href = "../index.html";
+        await handleUserRedirect(user);
+
       } catch (error) {
         alert("Google Sign-In failed: " + error.message);
       }
     });
   }
+
+  // Password Reset Handler
   if (forgotPassword) {
     forgotPassword.addEventListener("click", async (event) => {
       event.preventDefault();
