@@ -295,6 +295,7 @@
                         <div class="form-group">
                             <label for="eventImageUrl">Image URL</label>
                             <input type="url" id="eventImageUrl" placeholder="https://example.com/image.jpg">
+                            <img src="${escapeHtml(data.imageUrl)}" referrerpolicy="no-referrer" class="img-preview" alt="Event Image">
                         </div>
                         <div class="form-group">
                             <label for="eventDescription">Description</label>
