@@ -157,10 +157,19 @@
             text-align: left;
             padding: 0.75rem;
             border-bottom: 1px solid var(--border);
+            vertical-align: middle;
         }
 
         th {
             color: var(--text-secondary);
+        }
+
+        .img-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            background-color: var(--bg-primary);
         }
 
         .hidden {
@@ -213,9 +222,11 @@
                     <table id="eventsTable">
                         <thead>
                             <tr>
+                                <th>Image</th>
                                 <th>Title</th>
                                 <th>Date</th>
                                 <th>Category</th>
+                                <th>Location</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -235,6 +246,14 @@
                         <div class="form-group">
                             <label for="editDate">Date</label>
                             <input type="date" id="editDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLocation">Location</label>
+                            <input type="text" id="editLocation" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editImageUrl">Image URL</label>
+                            <input type="url" id="editImageUrl" placeholder="https://example.com/image.jpg">
                         </div>
                         <div class="form-group">
                             <label for="editDescription">Description</label>
@@ -270,6 +289,14 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="eventLocation">Location</label>
+                            <input type="text" id="eventLocation" placeholder="e.g. Main Auditorium / Zoom Link" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventImageUrl">Image URL</label>
+                            <input type="url" id="eventImageUrl" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <div class="form-group">
                             <label for="eventDescription">Description</label>
                             <textarea id="eventDescription" rows="4" required></textarea>
                         </div>
@@ -297,19 +324,16 @@
             onSnapshot 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        
         const ADMIN_EMAILS = [
-            "ideas.by.chen@gmail.com"
+            "youradmin@gmail.com"
         ];
 
-        // UI Element Selectors
         const googleLoginBtn = document.getElementById("googleLoginBtn");
         const logoutBtn = document.getElementById("logoutBtn");
         const authContainer = document.getElementById("authContainer");
         const adminContainer = document.getElementById("adminContainer");
         const userDisplay = document.getElementById("userDisplay");
 
-        // Auth Logic
         googleLoginBtn.addEventListener("click", async () => {
             const provider = new GoogleAuthProvider();
             try {
@@ -323,7 +347,6 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Verify if the logged-in email is on the allowed list
                 const isAllowed = ADMIN_EMAILS.some(
                     email => email.toLowerCase() === user.email.toLowerCase()
                 );
@@ -345,7 +368,6 @@
             }
         });
 
-        // Navigation Management
         window.showTab = function(tabName) {
             document.getElementById("tabDashboard").classList.add("hidden");
             document.getElementById("tabEvents").classList.add("hidden");
@@ -361,14 +383,11 @@
             if (tabName === 'create') document.getElementById("tabCreate").classList.remove("hidden");
         };
 
-        // Realtime Data Sync
         function initializeDashboard() {
-            // Metrics listener: Users
             onSnapshot(collection(db, "users"), (snapshot) => {
                 document.getElementById("userCountMetric").textContent = snapshot.size;
             });
 
-            // Metrics & Table listener: Events
             onSnapshot(collection(db, "events"), (snapshot) => {
                 document.getElementById("eventCountMetric").textContent = snapshot.size;
                 const tbody = document.getElementById("eventsTableBody");
@@ -378,25 +397,38 @@
                     const data = docSnap.data();
                     const tr = document.createElement("tr");
 
-                    // Escape strings via datasets to prevent injection and syntax errors
                     tr.dataset.id = docSnap.id;
                     tr.dataset.title = data.title || '';
                     tr.dataset.date = data.date || '';
+                    tr.dataset.location = data.location || '';
+                    tr.dataset.imageUrl = data.imageUrl || '';
                     tr.dataset.description = data.description || '';
 
+                    const imgHtml = data.imageUrl 
+                        ? `<img src="${escapeHtml(data.imageUrl)}" class="img-preview" alt="Event Image" onerror="this.src='https://via.placeholder.com/50?text=No+Img'">`
+                        : `<span style="color:var(--text-secondary)">N/A</span>`;
+
                     tr.innerHTML = `
+                        <td>${imgHtml}</td>
                         <td>${escapeHtml(data.title || '')}</td>
                         <td>${escapeHtml(data.date || '')}</td>
                         <td>${escapeHtml(data.category || '')}</td>
+                        <td>${escapeHtml(data.location || 'N/A')}</td>
                         <td>
                             <button class="btn edit-btn" style="width:auto; padding:0.25rem 0.5rem;">Edit</button>
                             <button class="btn btn-danger delete-btn" style="width:auto; padding:0.25rem 0.5rem;">Delete</button>
                         </td>
                     `;
 
-                    // Handle event bindings safely
                     tr.querySelector('.edit-btn').addEventListener('click', () => {
-                        openEdit(tr.dataset.id, tr.dataset.title, tr.dataset.date, tr.dataset.description);
+                        openEdit(
+                            tr.dataset.id, 
+                            tr.dataset.title, 
+                            tr.dataset.date, 
+                            tr.dataset.location, 
+                            tr.dataset.imageUrl, 
+                            tr.dataset.description
+                        );
                     });
 
                     tr.querySelector('.delete-btn').addEventListener('click', () => {
@@ -408,7 +440,6 @@
             });
         }
 
-        // Publishing Events
         document.getElementById("publishForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             try {
@@ -416,6 +447,8 @@
                     title: document.getElementById("eventTitle").value,
                     date: document.getElementById("eventDate").value,
                     category: document.getElementById("eventCategory").value,
+                    location: document.getElementById("eventLocation").value,
+                    imageUrl: document.getElementById("eventImageUrl").value,
                     description: document.getElementById("eventDescription").value,
                     createdAt: new Date().toISOString()
                 });
@@ -427,15 +460,15 @@
             }
         });
 
-        // Editing Events
-        function openEdit(id, title, date, description) {
+        function openEdit(id, title, date, location, imageUrl, description) {
             document.getElementById("editSection").classList.remove("hidden");
             document.getElementById("editEventId").value = id;
             document.getElementById("editTitle").value = title;
             document.getElementById("editDate").value = date;
+            document.getElementById("editLocation").value = location;
+            document.getElementById("editImageUrl").value = imageUrl;
             document.getElementById("editDescription").value = description;
             
-            // Scroll to edit view
             document.getElementById("editSection").scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -450,6 +483,8 @@
                 await updateDoc(doc(db, "events", id), {
                     title: document.getElementById("editTitle").value,
                     date: document.getElementById("editDate").value,
+                    location: document.getElementById("editLocation").value,
+                    imageUrl: document.getElementById("editImageUrl").value,
                     description: document.getElementById("editDescription").value
                 });
                 alert("Event updated successfully!");
@@ -459,7 +494,6 @@
             }
         });
 
-        // Deleting Events
         async function deleteEvent(id) {
             if (confirm("Are you sure you want to delete this event?")) {
                 try {
@@ -470,7 +504,6 @@
             }
         }
 
-        // Helper: Sanitize Text Node Data
         function escapeHtml(str) {
             return str.replace(/[&<>"']/g, (m) => {
                 return {
