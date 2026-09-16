@@ -220,6 +220,7 @@
                             <a href='about.html'>Privacy Policy</a>
                         </label>
                     </div>
+                    <div id="recaptcha-container"></div>
 
                     <button type="submit" class="submit-btn" id="submitBtn">
                         Create Account →
@@ -235,6 +236,13 @@
         </main>
 
     </div>
+    <script>
+        const recaptchaVerifier = new RecaptchaVerifier(
+  auth,
+  "recaptcha-container",
+  {}
+);
+    </script>
 
     <script type="module" src="../js/firebase-config.js"></script>
     <script type="module" src="../js/register.js"></script>
