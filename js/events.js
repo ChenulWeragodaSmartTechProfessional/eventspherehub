@@ -48,12 +48,117 @@ function categoryClass(category) {
 
 function renderEvents() {
     const searchTerm = searchInput.value.trim().toLowerCase();
+
     const visibleEvents = events.filter(event => {
         const category = categoryClass(event.category);
         const title = String(event.title || "").toLowerCase();
+
         return (selectedCategory === "all" || category === selectedCategory) &&
             (!searchTerm || title.includes(searchTerm) || category.includes(searchTerm));
     });
+
+    featuredEvents.innerHTML = visibleEvents.slice(0, 3).map(event => `
+        <article class="featured-card event-card" data-category="${categoryClass(event.category)}">
+
+            <div class="event-image">
+                ${event.imageUrl ? `
+                    <img 
+                        src="${event.imageUrl}" 
+                        alt="${event.title || "Event image"}"
+                        class="event-image-photo"
+                        loading="lazy"
+                        onerror="this.style.display='none'"
+                    >
+                ` : ""}
+
+                <span class="event-category">${event.category || "Event"}</span>
+
+                <div class="date-badge">
+                    <strong>${event.date ? event.date.slice(8, 10) : "--"}</strong>
+                    <span>
+                        ${event.date
+                            ? new Date(`${event.date}T00:00:00`)
+                                .toLocaleDateString("en-US", { month: "short" })
+                                .toUpperCase()
+                            : ""}
+                    </span>
+                </div>
+            </div>
+
+            <div class="event-content">
+                <h3>${event.title || "Untitled event"}</h3>
+
+                <p>${event.description || "No description provided."}</p>
+
+                <div class="event-info">
+                    <span>◷ ${event.time || "Time to be announced"}</span>
+                    <span>⌖ ${event.location || "Location to be announced"}</span>
+                </div>
+
+                <button class="details-button" data-event-id="${event.id}">
+                    View Details <span>→</span>
+                </button>
+            </div>
+
+        </article>
+    `).join("");
+
+    eventList.innerHTML = visibleEvents.slice(3).map(event => `
+        <article class="list-event event-card" data-category="${categoryClass(event.category)}">
+
+            <div class="list-date">
+                <strong>${event.date ? event.date.slice(8, 10) : "--"}</strong>
+                <span>
+                    ${event.date
+                        ? new Date(`${event.date}T00:00:00`)
+                            .toLocaleDateString("en-US", { month: "short" })
+                            .toUpperCase()
+                        : ""}
+                </span>
+            </div>
+
+            <div class="list-event-content">
+
+                ${event.imageUrl ? `
+                    <img 
+                        src="${event.imageUrl}" 
+                        alt="${event.title || "Event image"}"
+                        class="list-event-image"
+                        loading="lazy"
+                        onerror="this.style.display='none'"
+                    >
+                ` : ""}
+
+                <span class="small-category ${categoryClass(event.category)}">
+                    ${event.category || "Event"}
+                </span>
+
+                <h3>${event.title || "Untitled event"}</h3>
+
+                <p>${event.description || "No description provided."}</p>
+
+                <div class="list-meta">
+                    <span>◷ ${event.time || "Time to be announced"}</span>
+                    <span>⌖ ${event.location || "Location to be announced"}</span>
+                </div>
+
+            </div>
+
+            <button class="list-arrow" data-event-id="${event.id}" aria-label="View event details">
+                →
+            </button>
+
+        </article>
+    `).join("");
+
+    noResults.classList.toggle("show", visibleEvents.length === 0);
+
+    document.querySelectorAll("[data-event-id]").forEach(button => {
+        button.addEventListener("click", () => {
+            openModal(events.find(event => event.id === button.dataset.eventId));
+        });
+    });
+}
 
     featuredEvents.innerHTML = visibleEvents.slice(0, 3).map(event => `
         <article class="featured-card event-card" data-category="${categoryClass(event.category)}">
