@@ -152,6 +152,10 @@ Keep the administrator email consistent in both files:
 - `js/dashboard.js` - destination for teacher requests
 - `admin.html` - allowlist for administrator access
 
+##Repository
+
+- https://github.com/ChenulWeragodaSmartTechProfessional/eventspherehub
+
 ## Security Notes
 
 - Firebase Authentication controls account identity.
