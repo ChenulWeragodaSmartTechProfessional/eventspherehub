@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personalized EventSphere dashboard.">
+    <title>Dashboard | EventSphere</title>
+    <link rel="icon" type="image/png" href="../images/favicon/eventspherelogo.png">
+    <link rel="stylesheet" href="../css/darktheme.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a class="logo" href="../index.html">
+                <span class="logo-icon"><img src="../images/logo/eventspherelogo.png" width="38" height="38" alt="EventSphere Logo"></span>
+                <span>EventSphere</span>
+            </a>
+            <nav class="nav" id="nav">
+                <a href="../index.html">Home</a>
+                <a href="events.html">Events</a>
+                <a class="active" href="dashboard.html">Dashboard</a>
+                <a href="calendar.html">Calendar</a>
+            </nav>
+            <div class="header-actions">
+                <button class="dashboard-signout" id="signOutButton" type="button">Sign Out</button>
+            </div>
+            <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation menu">Menu</button>
+        </div>
+    </header>
+
+    <main class="dashboard-page">
+        <section class="dashboard-hero">
+            <div>
+                <span class="section-label">PERSONAL DASHBOARD</span>
+                <h1>Welcome, <span id="userName">EventSphere member</span></h1>
+                <p id="dashboardIntro">Your school activity, organized around you.</p>
+            </div>
+            <div class="role-pill" id="rolePill">Loading profile</div>
+        </section>
+
+        <section class="dashboard-grid" id="dashboardContent" aria-live="polite">
+            <article class="dashboard-card dashboard-card-wide">
+                <div class="card-heading">
+                    <div>
+                        <span class="section-label">UPCOMING</span>
+                        <h2>School events</h2>
+                    </div>
+                    <a class="text-link" href="events.html">Browse all</a>
+                </div>
+                <div class="event-feed" id="eventFeed">
+                    <p class="empty-state">Loading events...</p>
+                </div>
+            </article>
+
+            <aside class="dashboard-card role-card-panel" id="rolePanel">
+                <span class="section-label">YOUR SPACE</span>
+                <h2 id="rolePanelTitle">Your dashboard</h2>
+                <p id="rolePanelText">Loading your role tools...</p>
+                <div class="role-actions" id="roleActions"></div>
+            </aside>
+        </section>
+
+        <section class="dashboard-card account-card">
+            <div>
+                <span class="section-label">ACCOUNT</span>
+                <h2 id="accountName">Profile</h2>
+                <p id="accountEmail">Loading account details...</p>
+            </div>
+            <a class="secondary-action" href="contact.html">Contact support</a>
+        </section>
+    </main>
+
+    <script type="module" src="../js/dashboard.js"></script>
+</body>
+</html>

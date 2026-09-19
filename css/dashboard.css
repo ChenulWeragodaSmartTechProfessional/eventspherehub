@@ -1,0 +1,231 @@
+.dashboard-page {
+    width: min(1200px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 132px 0 80px;
+}
+
+.dashboard-hero {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+
+.dashboard-hero h1 {
+    margin-top: 8px;
+    color: #ffffff;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.1;
+}
+
+.dashboard-hero h1 span {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dashboard-hero p,
+.dashboard-card p {
+    color: var(--text-secondary);
+}
+
+.role-pill {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(129, 140, 248, 0.35);
+    border-radius: var(--radius-pill);
+    color: #c7d2fe;
+    background: rgba(99, 102, 241, 0.12);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+    gap: 24px;
+}
+
+.dashboard-card {
+    padding: 28px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.dashboard-card-wide {
+    min-width: 0;
+}
+
+.card-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.dashboard-card h2 {
+    color: #ffffff;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.text-link,
+.secondary-action {
+    color: var(--primary-light);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.event-feed {
+    display: grid;
+    gap: 12px;
+}
+
+.event-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.event-row-date {
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--primary-light);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.event-row-date strong {
+    display: block;
+    color: #ffffff;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.event-row h3 {
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.event-row p {
+    overflow: hidden;
+    margin-top: 3px;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.event-row-link {
+    color: var(--accent-light);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.role-card-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.role-card-panel h2 {
+    margin-bottom: 10px;
+}
+
+.role-card-panel p {
+    line-height: 1.6;
+}
+
+.role-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 28px;
+}
+
+.role-action,
+.dashboard-signout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    border-radius: var(--radius-sm);
+    background: rgba(99, 102, 241, 0.12);
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.role-action:hover,
+.dashboard-signout:hover {
+    background: var(--gradient);
+    color: #ffffff;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.account-card h2 {
+    margin-bottom: 4px;
+}
+
+.empty-state {
+    padding: 24px 0;
+}
+
+@media (max-width: 760px) {
+    .dashboard-hero,
+    .account-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-page {
+        width: min(100% - 32px, 1200px);
+        padding-top: 108px;
+    }
+
+    .dashboard-card {
+        padding: 20px;
+    }
+
+    .event-row {
+        grid-template-columns: 58px minmax(0, 1fr);
+    }
+
+    .event-row-link {
+        display: none;
+    }
+}
